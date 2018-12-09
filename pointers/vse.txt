@@ -1,0 +1,6 @@
+[FILE "ciste;+R-L;rec_U01_Wed_Oct_31_09_51_14_2018_.txt"]
+start	15 s	> end
+[FILE "ciste;-R+L;rec_U01_Wed_Oct_31_10_05_24_2018_.txt"]
+start	15 s	> end
+[FILE "ciste;hr-hl;rec_U01_Wed_Oct_31_10_18_46_2018_.txt"]
+start	15 s	> end

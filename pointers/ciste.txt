@@ -1,5 +1,17 @@
 [FILE "ciste;+R-L;rec_U01_Wed_Oct_31_09_51_14_2018_.txt"]
+100k v	+ 15 s
 164k v	+ 15 s
-20 s	+ 15
+200 s	+ 15
 220k v	. 227500
 292k v	- 15 s
+105000-112500
+270k v	+ 15 s
+345500	+ 15 s
+[FILE "ciste;-R+L;rec_U01_Wed_Oct_31_10_05_24_2018_.txt"]
+90k	+ 15 s
+135k	+ 15 s
+180k	+ 15 s
+194k	+ 15 s
+203k	+ 15 s
+[FILE "ciste;hr-hl;rec_U01_Wed_Oct_31_10_18_46_2018_.txt"]
+3500	+ 15 s
