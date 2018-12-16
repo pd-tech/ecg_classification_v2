@@ -125,7 +125,7 @@ def pointReader(point_file):
 
 def save(dataset, label):
     num = 0
-    for sample in dataset:
+    for sample in dataset[0]:
         expected_value = mean(sample)
         time = 0.000
         filename = "./dataset/" + label + "/sample_" + str(num) + ".csv"
