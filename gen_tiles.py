@@ -99,7 +99,7 @@ def main():
     output_dir        = sys.argv[2]
 
     
-    dataset, xxx, yyy, start_points, end_points, file_sep = load(pointers_file)
+    dataset, _xxx, _yyy, start_points, end_points, file_sep, _zzz = load(pointers_file)
     os.makedirs(output_dir, exist_ok=True)
     gen(dataset, start_points, end_points, output_dir, file_sep)
 
