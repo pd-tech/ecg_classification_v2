@@ -26,7 +26,7 @@ def preprocess(entry, shift):
 
     return spoint, epoint, typ, operand
 
-def enumerate(spoint, epoint, step, src):
+def enumerate(spoint, epoint, step, src, params):
     start = spoint
     slist = []
     elist = []
@@ -41,13 +41,23 @@ def enumerate(spoint, epoint, step, src):
             break
         start += step
 
-    return slist, elist
+    return slist, elist, params
 
 
 def parse(entry, src_file):
     pos_shift = 0
+    sample_params = [0.0, 0.0, 0.0, 0.0]
     if(len(entry) == 1 and "-" in entry[0]): entry = entry[0].replace("-", " - ").split("-")
     if(len(entry) >= 3 and ">" in entry[2]): pos_shift += 1
+    if(len(entry) >= 3+pos_shift):
+        if(entry[2+pos_shift].startswith('[') and entry[2+pos_shift].endswith(']')):
+            for param in (entry[2+pos_shift])[1:-1].split(","):
+                if "ciste" in param.split(":")[0]: sample_params[0] = float(param.split(":")[1])
+                if "pohyb" in param.split(":")[0]: sample_params[1] = float(param.split(":")[1])
+                if "abrupt" in param.split(":")[0]: sample_params[2] = float(param.split(":")[1])
+                if "sit50" in param.split(":")[0]: sample_params[3] = float(param.split(":")[1])
+    if(sample_params == [0.0, 0.0, 0.0, 0.0]): sample_params[0] = 1.0
+
 
     spoint, epoint, typ, operand = preprocess(entry, pos_shift)
 
@@ -58,14 +68,14 @@ def parse(entry, src_file):
     if(len(epoint) <= 2): epoint = convert(epoint[1-pos_shift], typ)
     else: epoint = convert(epoint[1], epoint[2])
     
-    if operand == "+": return(spoint, spoint+epoint)
-    if operand == "-": return(spoint-epoint, spoint)
-    if operand == ".": return(spoint, epoint)
+    if operand == "+": return(spoint, spoint+epoint, sample_params)
+    if operand == "-": return(spoint-epoint, spoint, sample_params)
+    if operand == ".": return(spoint, epoint, sample_params)
     if operand == "►" or operand == ">":
         step = convert(entry[1].split(" ")[0], entry[1].split(" ")[1])
-        return enumerate(spoint, epoint, step, src_file)
+        return enumerate(spoint, epoint, step, src_file, sample_params)
 
-    return(spoint, epoint)
+    return spoint, epoint, sample_params
 
 def csvreader(src_file, start_points, end_points):
     volts = []
@@ -86,6 +96,7 @@ def pointReader(point_file):
     start_points = []
     end_points = [] 
     dataset = []
+    dataset_params = []
 
     all_spoint = []
     all_epoint = []
@@ -109,7 +120,8 @@ def pointReader(point_file):
                     end_points = []
                     src_file = entry[0].split('"')[1]
                 continue
-            spoint, epoint = parse(entry, src_file)
+            spoint, epoint, params = parse(entry, src_file)
+            dataset_params.append(params)
 
             if isinstance(spoint, list):
                 start_points.extend(spoint)
@@ -121,7 +133,7 @@ def pointReader(point_file):
         all_spoint.extend(start_points)
         all_epoint.extend(end_points)
         dataset.extend(csvreader(src_file, start_points, end_points))
-        return dataset, start_points, end_points, all_spoint, all_epoint, file_sep
+        return dataset, start_points, end_points, all_spoint, all_epoint, file_sep, dataset_params
 
 def save(dataset, label):
     num = 0
@@ -146,6 +158,7 @@ def main():
         for root, dirs, files in os.walk(inDIR): 
             for file in files:
                 label = os.path.splitext(file)[0]
+                if(label.startswith("#")): continue     # pointer file "disable" feature w/o need to move or delete it
                 dataset = pointReader(os.path.join(root, file))
                 save(dataset, label)
 
